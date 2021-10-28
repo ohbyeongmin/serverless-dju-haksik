@@ -1,0 +1,23 @@
+mode: set
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:34.27,35.16 1 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:35.16,37.3 1 0
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:40.78,47.16 7 0
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:52.2,53.16 2 0
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:57.2,57.10 1 0
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:47.16,50.3 2 0
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:53.16,56.3 2 0
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:60.34,63.2 2 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:65.36,76.65 7 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:76.65,78.9 2 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:78.9,81.4 2 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:85.38,96.70 8 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:103.2,103.95 1 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:96.70,98.9 2 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:98.9,100.4 1 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:106.49,108.2 1 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:110.49,112.2 1 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:114.49,116.2 1 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:118.44,131.2 9 0
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:139.108,141.2 1 1
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:143.23,161.2 10 0
+github.com/ohbyeongmin/serverless-dju-haksik/src/crawling/crawling.go:163.13,169.2 5 0
