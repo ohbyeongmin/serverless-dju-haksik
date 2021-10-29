@@ -29,7 +29,7 @@ const (
 	S3BucketName string = "crawling-test-obm"
 )
 
-var filename string = "diet"
+var filename string = "diet.xlsx"
 
 func HandleErr(err error) {
 	if err != nil {
@@ -145,7 +145,7 @@ func UploadFileToS3() {
 	HandleErr(err)
 	client := s3.NewFromConfig(cfg)
 
-	file, err := os.Open(fmt.Sprintf("%s.xlsx", filename))
+	file, err := os.Open(fmt.Sprintf("%s", filename))
 	HandleErr(err)
 	defer file.Close()
 

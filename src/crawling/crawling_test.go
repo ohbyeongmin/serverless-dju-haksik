@@ -38,7 +38,7 @@ func TestPutObject(t *testing.T) {
 	t.Log("Uploaded version " + *resp.VersionId + " of " + k + " to bucket " + b)
 }
 
-func TestDownloadUrl(t *testing.T) {
+func TestUrl(t *testing.T) {
 	d := DaejeonHRCUrl{
 		ListURL:     "https://www.dju.ac.kr/hrc/na/ntt/selectNttList.do",
 		InfoURL:     "https://www.dju.ac.kr/hrc/na/ntt/selectNttInfo.do",
