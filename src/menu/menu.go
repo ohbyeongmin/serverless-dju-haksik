@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
@@ -22,7 +23,6 @@ const (
 	maxRowNum      int    = 23
 	minColNum      int    = 2
 	maxColNum      int    = 7
-	S3BucketName   string = "crawling-test-obm"
 	Filename       string = "diet.xlsx"
 	menuObjectName string = "menuObject"
 )
@@ -52,7 +52,7 @@ func InitMenu() {
 }
 
 func (m *menutable) parseMenuFile() {
-	f, err := excelize.OpenFile("diet.xlsx")
+	f, err := excelize.OpenFile("/tmp/diet.xlsx")
 	HandleErr(err)
 	sheetName := f.GetSheetList()[0]
 
@@ -84,7 +84,7 @@ func (m *menutable) parseMenuFile() {
 }
 
 func WriteFile() {
-	f, err := os.Create(menuObjectName)
+	f, err := os.Create(fmt.Sprintf("/tmp/%s", menuObjectName))
 	HandleErr(err)
 	defer f.Close()
 	var buffer bytes.Buffer
@@ -108,15 +108,17 @@ func DownloadDietFile() {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	HandleErr(err)
 
-	file, err := os.Create("diet.xlsx")
+	file, err := os.Create("/tmp/diet.xlsx")
 	HandleErr(err)
 	defer file.Close()
 
 	client := s3.NewFromConfig(cfg)
 
+	bucket := os.Getenv("bucket")
+
 	downloader := manager.NewDownloader(client)
 	_, err = downloader.Download(context.TODO(), file, &s3.GetObjectInput{
-		Bucket: aws.String(S3BucketName),
+		Bucket: aws.String(bucket),
 		Key:    aws.String(Filename),
 	})
 	HandleErr(err)
@@ -132,9 +134,11 @@ func DownloadObjectFile() {
 
 	client := s3.NewFromConfig(cfg)
 
+	bucket := os.Getenv("bucket")
+
 	downloader := manager.NewDownloader(client)
 	_, err = downloader.Download(context.TODO(), file, &s3.GetObjectInput{
-		Bucket: aws.String(S3BucketName),
+		Bucket: aws.String(bucket),
 		Key:    aws.String(menuObjectName),
 	})
 	HandleErr(err)
@@ -155,14 +159,14 @@ func UploadFileToS3() {
 	HandleErr(err)
 	client := s3.NewFromConfig(cfg)
 
-	file, err := os.Open(menuObjectName)
+	file, err := os.Open(fmt.Sprintf("/tmp/%s", menuObjectName))
 	HandleErr(err)
 	defer file.Close()
 
 	bucket := os.Getenv("bucket")
 	input := &s3.PutObjectInput{
 		Bucket: aws.String(bucket),
-		Key:    aws.String(Filename),
+		Key:    aws.String(menuObjectName),
 		Body:   file,
 	}
 
@@ -170,10 +174,21 @@ func UploadFileToS3() {
 	HandleErr(err)
 }
 
-func main() {
-	os.Setenv("bucket", S3BucketName)
+type Test struct {
+	Test string `yaml:"test" json:"test"`
+}
+
+var testMessage Test
+
+func LambdaHandler() (Test, error) {
 	DownloadDietFile()
 	InitMenu()
 	WriteFile()
 	UploadFileToS3()
+	testMessage.Test = "menu lambda test"
+	return testMessage, nil
+}
+
+func main() {
+	lambda.Start(LambdaHandler)
 }
