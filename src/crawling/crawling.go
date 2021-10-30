@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/spf13/viper"
@@ -24,10 +25,6 @@ type DaejeonHRCUrl struct {
 	NttSn       string `yaml:"nttSn"`
 	FileKey     string `yaml:"fileKey"`
 }
-
-const (
-	S3BucketName string = "crawling-test-obm"
-)
 
 var filename string = "diet.xlsx"
 
@@ -123,7 +120,7 @@ func (d *DaejeonHRCUrl) DownloadDietFile() {
 	download, err := ioutil.ReadAll(downRes.Body)
 	HandleErr(err)
 
-	file, err := os.Create(fmt.Sprintf("%s.xlsx", filename))
+	file, err := os.Create(fmt.Sprintf("/tmp/%s", filename))
 	HandleErr(err)
 	defer file.Close()
 
@@ -145,7 +142,7 @@ func UploadFileToS3() {
 	HandleErr(err)
 	client := s3.NewFromConfig(cfg)
 
-	file, err := os.Open(fmt.Sprintf("%s", filename))
+	file, err := os.Open(fmt.Sprintf("/tmp/%s", filename))
 	HandleErr(err)
 	defer file.Close()
 
@@ -160,10 +157,21 @@ func UploadFileToS3() {
 	HandleErr(err)
 }
 
-func main() {
-	os.Setenv("bucket", S3BucketName)
+type Test struct {
+	Test string `yaml:"test" json:"test"`
+}
+
+var testMessage Test
+
+func LambdaHandler() (Test, error) {
 	url := GetConfiguration("url", "yaml", "config")
 	url.SetUrl()
 	url.DownloadDietFile()
 	UploadFileToS3()
+	testMessage.Test = "OK"
+	return testMessage, nil
+}
+
+func main() {
+	lambda.Start(LambdaHandler)
 }
