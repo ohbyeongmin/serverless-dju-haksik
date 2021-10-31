@@ -2,6 +2,11 @@
 
 참고 :
 
-| 목록           | 링크                                                                           |
-| -------------- | ------------------------------------------------------------------------------ |
-| Go Lambda 함수 | [Link](https://docs.aws.amazon.com/ko_kr/lambda/latest/dg/golang-handler.html) |
+| 목록                       | 링크                                                                                                       |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Go Lambda function         | [Link](https://docs.aws.amazon.com/ko_kr/lambda/latest/dg/golang-handler.html)                             |
+| AWS Lambda & API Gateway   | [Link](https://learn.hashicorp.com/tutorials/terraform/lambda-api-gateway)                                 |
+| aws s3 bucket notofication | [Link](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification) |
+| aws cloudwatch event rule  | [Link](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule)  |
+| terraform lambda example   | [Link](https://github.com/snsinfu/terraform-lambda-example)                                                |
+| aws role                   | [Link](https://www.notion.so/IAM-ec1e72d874b540448401d7523693f3bb)                                         |
