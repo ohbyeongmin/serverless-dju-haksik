@@ -12,9 +12,7 @@ type TemplateType struct {
 }
 
 type OutputsType struct {
-	// SimpleText SimpleTextType `json:"simpleText,omitempty"`
 	ItemCard ItemCardType `json:"itemCard,omitempty"`
-	// Carousel CarouselType `json:"carousel"`
 }
 
 type SimpleTextType struct {
@@ -22,11 +20,11 @@ type SimpleTextType struct {
 }
 
 type ItemCardType struct {
-	Profile  ICProfile `json:"profile"`
-	ItemList []ICItem  `json:"itemList"`
+	Head     ICHead   `json:"head"`
+	ItemList []ICItem `json:"itemList"`
 }
 
-type ICProfile struct {
+type ICHead struct {
 	Title string `json:"title"`
 }
 
@@ -46,7 +44,7 @@ func GetOneMenuReasponse(menu []string) *SkillResponseType {
 		itemList = append(itemList, ICItem{Title: fmt.Sprintf("%d", i+1), Description: v})
 	}
 	itemCard := ItemCardType{
-		Profile: ICProfile{
+		Head: ICHead{
 			Title: "점심",
 		},
 		ItemList: itemList,

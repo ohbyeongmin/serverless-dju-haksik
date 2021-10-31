@@ -31,7 +31,6 @@ type LunOrDin int
 const (
 	LUNCH LunOrDin = iota
 	DINNER
-	kk
 )
 
 type menu map[time.Weekday][]string
@@ -127,26 +126,6 @@ func DownloadDietFile(file string) {
 	_, err = downloader.Download(context.TODO(), f, &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
-	})
-	HandleErr(err)
-}
-
-func DownloadObjectFile() {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	HandleErr(err)
-
-	file, err := os.Create(menuObjectName)
-	HandleErr(err)
-	defer file.Close()
-
-	client := s3.NewFromConfig(cfg)
-
-	bucket := os.Getenv("bucket")
-
-	downloader := manager.NewDownloader(client)
-	_, err = downloader.Download(context.TODO(), file, &s3.GetObjectInput{
-		Bucket: aws.String(bucket),
-		Key:    aws.String(menuObjectName),
 	})
 	HandleErr(err)
 }

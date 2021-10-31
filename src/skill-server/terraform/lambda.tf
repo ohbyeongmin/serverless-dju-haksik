@@ -34,6 +34,8 @@ resource "aws_s3_bucket_object" "skill_server_function" {
   etag = filemd5(data.archive_file.skill_server_function.output_path)
 }
 
+
+
 resource "aws_lambda_function" "skill_server_lambda" {
   function_name = "skillServer"
 
@@ -53,6 +55,12 @@ resource "aws_lambda_function" "skill_server_lambda" {
       objectFile = data.terraform_remote_state.object_file.outputs.object_file_name
     }
   }
+}
+
+resource "aws_cloudwatch_log_group" "skill_server_function" {
+  name = "/aws/lambda/${aws_lambda_function.skill_server_lambda.function_name}"
+
+  retention_in_days = 30
 }
 
 resource "aws_iam_role" "skill_server_lambda_role" {
