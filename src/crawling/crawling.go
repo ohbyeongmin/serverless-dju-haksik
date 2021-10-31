@@ -11,6 +11,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/spf13/viper"
@@ -147,9 +148,10 @@ func UploadFileToS3() {
 	defer file.Close()
 
 	bucket := os.Getenv("bucket")
+	key := fmt.Sprintf("data/%s", filename)
 	input := &s3.PutObjectInput{
-		Bucket: &bucket,
-		Key:    &filename,
+		Bucket: aws.String(bucket),
+		Key:    aws.String(key),
 		Body:   file,
 	}
 

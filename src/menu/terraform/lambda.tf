@@ -18,7 +18,7 @@ data "terraform_remote_state" "dh_s3" {
 resource "aws_s3_bucket_object" "menu_function" {
   bucket = data.terraform_remote_state.dh_s3.outputs.dh_bucket_name
 
-  key = "menu.zip"
+  key = "lambda_function/menu.zip"
   source = data.archive_file.menu_function.output_path
 
   etag = filemd5(data.archive_file.menu_function.output_path)
@@ -87,11 +87,12 @@ resource "aws_iam_role_policy_attachment" "menu_lambda_policy" {
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = data.terraform_remote_state.dh_s3.outputs.dh_bucket_name
+  
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.menu_lambda.arn 
     events = ["s3:ObjectCreated:Put"]
-    filter_prefix = "diet"
+    filter_prefix = "data"
     filter_suffix = ".xlsx"
   }
 

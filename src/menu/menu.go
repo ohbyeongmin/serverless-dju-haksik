@@ -14,7 +14,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/ohbyeongmin/daejeon-haksik/constants"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -23,17 +22,25 @@ const (
 	maxRowNum      int    = 23
 	minColNum      int    = 2
 	maxColNum      int    = 7
-	Filename       string = "diet.xlsx"
+	filename       string = "diet.xlsx"
 	menuObjectName string = "menuObject"
+)
+
+type LunOrDin int
+
+const (
+	LUNCH LunOrDin = iota
+	DINNER
+	kk
 )
 
 type menu map[time.Weekday][]string
 
 type menutable struct {
-	table map[constants.LunOrDin]menu
+	table map[LunOrDin]menu
 }
 
-var mt menutable
+var mt *menutable
 
 func HandleErr(err error) {
 	if err != nil {
@@ -41,18 +48,17 @@ func HandleErr(err error) {
 	}
 }
 
-func InitMenu() {
-	mt = menutable{
-		table: make(map[constants.LunOrDin]menu),
+func InitMenu() *menutable {
+	m := &menutable{
+		table: make(map[LunOrDin]menu),
 	}
-	mt.table[constants.LUNCH] = make(menu)
-	mt.table[constants.DINNER] = make(menu)
-
-	mt.parseMenuFile()
+	m.table[LUNCH] = make(menu)
+	m.table[DINNER] = make(menu)
+	return m
 }
 
-func (m *menutable) parseMenuFile() {
-	f, err := excelize.OpenFile("/tmp/diet.xlsx")
+func (m *menutable) parseMenuFile(file string) {
+	f, err := excelize.OpenFile(fmt.Sprintf("/tmp/%s", file))
 	HandleErr(err)
 	sheetName := f.GetSheetList()[0]
 
@@ -63,7 +69,7 @@ func (m *menutable) parseMenuFile() {
 		return
 	}
 
-	lunchOrDinner := constants.LUNCH
+	lunchOrDinner := LUNCH
 	for i, row := range rows {
 		if i < minRowNum {
 			continue
@@ -74,17 +80,17 @@ func (m *menutable) parseMenuFile() {
 		for j, colCell := range row {
 			if j < minColNum || j >= maxColNum {
 				if colCell == "석  식" {
-					lunchOrDinner = constants.DINNER
+					lunchOrDinner = DINNER
 				}
 				continue
 			}
-			mt.table[lunchOrDinner][time.Weekday(j-1)] = append(mt.table[lunchOrDinner][time.Weekday(j-1)], colCell)
+			m.table[lunchOrDinner][time.Weekday(j-1)] = append(m.table[lunchOrDinner][time.Weekday(j-1)], colCell)
 		}
 	}
 }
 
-func WriteFile() {
-	f, err := os.Create(fmt.Sprintf("/tmp/%s", menuObjectName))
+func WriteFile(file string) {
+	f, err := os.Create(fmt.Sprintf("/tmp/%s", file))
 	HandleErr(err)
 	defer f.Close()
 	var buffer bytes.Buffer
@@ -101,25 +107,26 @@ func ReadFile() {
 	dec := gob.NewDecoder(&buffer)
 	buffer.ReadFrom(f)
 	dec.Decode(&m.table)
-	fmt.Println(m.table[constants.LUNCH][time.Friday])
+	fmt.Println(m.table[LUNCH][time.Friday])
 }
 
-func DownloadDietFile() {
+func DownloadDietFile(file string) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	HandleErr(err)
 
-	file, err := os.Create("/tmp/diet.xlsx")
+	f, err := os.Create(fmt.Sprintf("/tmp/%s", file))
 	HandleErr(err)
-	defer file.Close()
+	defer f.Close()
 
 	client := s3.NewFromConfig(cfg)
 
 	bucket := os.Getenv("bucket")
+	key := fmt.Sprintf("data/%s", file)
 
 	downloader := manager.NewDownloader(client)
-	_, err = downloader.Download(context.TODO(), file, &s3.GetObjectInput{
+	_, err = downloader.Download(context.TODO(), f, &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
-		Key:    aws.String(Filename),
+		Key:    aws.String(key),
 	})
 	HandleErr(err)
 }
@@ -154,20 +161,21 @@ func PutFile(c context.Context, api S3PutObjectAPI, input *s3.PutObjectInput) (*
 	return api.PutObject(c, input)
 }
 
-func UploadFileToS3() {
+func UploadFileToS3(file string) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	HandleErr(err)
 	client := s3.NewFromConfig(cfg)
 
-	file, err := os.Open(fmt.Sprintf("/tmp/%s", menuObjectName))
+	f, err := os.Open(fmt.Sprintf("/tmp/%s", file))
 	HandleErr(err)
-	defer file.Close()
+	defer f.Close()
 
 	bucket := os.Getenv("bucket")
+	key := fmt.Sprintf("data/%s", file)
 	input := &s3.PutObjectInput{
 		Bucket: aws.String(bucket),
-		Key:    aws.String(menuObjectName),
-		Body:   file,
+		Key:    aws.String(key),
+		Body:   f,
 	}
 
 	_, err = PutFile(context.TODO(), client, input)
@@ -181,10 +189,11 @@ type Test struct {
 var testMessage Test
 
 func LambdaHandler() (Test, error) {
-	DownloadDietFile()
-	InitMenu()
-	WriteFile()
-	UploadFileToS3()
+	DownloadDietFile(filename)
+	mt = InitMenu()
+	mt.parseMenuFile(filename)
+	WriteFile(menuObjectName)
+	UploadFileToS3(menuObjectName)
 	testMessage.Test = "menu lambda test"
 	return testMessage, nil
 }

@@ -8,7 +8,7 @@ data "archive_file" "crawling_function" {
 resource "aws_s3_bucket_object" "crawling_function" {
   bucket = aws_s3_bucket.dh_bucket.id
 
-  key = "crawling.zip"
+  key = "lambda_function/crawling.zip"
   source = data.archive_file.crawling_function.output_path
 
   etag = filemd5(data.archive_file.crawling_function.output_path)

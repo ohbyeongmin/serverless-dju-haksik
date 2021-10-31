@@ -1,0 +1,6 @@
+POST https://efzai91l5b.execute-api.ap-northeast-2.amazonaws.com/skill_server_lambda_stage/menu
+
+{
+    "What is your name?": "obm",
+	"How old are you?": 29
+}
