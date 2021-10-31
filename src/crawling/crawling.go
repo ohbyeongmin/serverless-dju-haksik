@@ -114,6 +114,7 @@ func (d *DaejeonHRCUrl) getDownloadURL() string {
 }
 
 func (d *DaejeonHRCUrl) DownloadDietFile() {
+	log.Printf("Download file : %s", filename)
 	downloadLink := d.getDownloadURL()
 	downRes, err := http.Get(downloadLink)
 	HandleErr(err)

@@ -59,6 +59,7 @@ func ReadFile() *menutable {
 }
 
 func HandleSkillServer(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
 	var weekDay time.Weekday
 	params := BotRequestType{
 		Action: ActionType{
@@ -93,9 +94,10 @@ func HandleSkillServer(req events.APIGatewayProxyRequest) (events.APIGatewayProx
 		weekDay = time.Friday
 	}
 
+	DownloadObjectFile()
 	m := ReadFile()
 
-	bodyResponse := GetOneMenuReasponse(m.table[lunchOrDinner][weekDay])
+	bodyResponse := GetOneMenuReasponse(m.table[lunchOrDinner][weekDay], lunchOrDinner)
 	response, err := json.Marshal(bodyResponse)
 	HandleErr(err)
 
@@ -104,7 +106,6 @@ func HandleSkillServer(req events.APIGatewayProxyRequest) (events.APIGatewayProx
 		Headers:    map[string]string{"Content-Type": "application/json"},
 		Body:       string(response),
 	}
-	DownloadObjectFile()
 
 	return res, nil
 

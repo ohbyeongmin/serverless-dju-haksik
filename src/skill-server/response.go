@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type SkillResponseType struct {
 	Version  string       `json:"version"`
 	Template TemplateType `json:"template,omitempty"`
@@ -36,29 +34,4 @@ type ICItem struct {
 type CarouselType struct {
 	Type  string         `json:"type"`
 	Items []ItemCardType `json:"items"`
-}
-
-func GetOneMenuReasponse(menu []string) *SkillResponseType {
-	itemList := []ICItem{}
-	for i, v := range menu {
-		itemList = append(itemList, ICItem{Title: fmt.Sprintf("%d", i+1), Description: v})
-	}
-	itemCard := ItemCardType{
-		Head: ICHead{
-			Title: "점심",
-		},
-		ItemList: itemList,
-	}
-	outputs := []OutputsType{
-		{itemCard},
-	}
-	template := TemplateType{
-		outputs,
-	}
-	res := SkillResponseType{
-		Version:  "2.0",
-		Template: template,
-	}
-
-	return &res
 }

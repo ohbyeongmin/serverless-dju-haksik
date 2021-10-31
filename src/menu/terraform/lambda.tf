@@ -80,10 +80,35 @@ resource "aws_iam_policy" "policy" {
   })
 }
 
+resource "aws_iam_policy" "logs_policy" {
+  name ="logs-policy-menu"
+
+  policy = jsonencode({
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:logs:*:*:*"
+    }
+  ]
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "menu_lambda_policy" {
   role       = aws_iam_role.menu_lambda_role.name
   policy_arn = aws_iam_policy.policy.arn
 }
+
+resource "aws_iam_role_policy_attachment" "logs_lambda_policy" {
+  role       = aws_iam_role.menu_lambda_role.name
+  policy_arn = aws_iam_policy.logs_policy.arn
+}
+
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = data.terraform_remote_state.dh_s3.outputs.dh_bucket_name

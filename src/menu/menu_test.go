@@ -19,6 +19,12 @@ func TestInitMenu(t *testing.T) {
 	assert.True(t, ok, "InitMenu Initialized menutable.talbe[DINNER], but not exist")
 }
 
+type TestFilePath struct{}
+
+func (TestFilePath) convertFilepath(file string) string {
+	return file
+}
+
 func TestParseMenuFile(t *testing.T) {
 	mockMenuTable := menutable{
 		table: make(map[LunOrDin]menu),
@@ -38,7 +44,7 @@ func TestParseMenuFile(t *testing.T) {
 	mockMenuTable.table[DINNER][time.Thursday] = append(mockMenuTable.table[DINNER][time.Thursday], []string{"매콤돈육떡폭찹", "잡곡밥", "얼큰우거지해장국", "매콤분모자국물떡볶이", "오징어링튀김*칠리S", "부추겉절이", "깍두기", "식빵*사과잼", "달걀후라이", "음료2종"}...)
 	mockMenuTable.table[DINNER][time.Friday] = append(mockMenuTable.table[DINNER][time.Friday], []string{"간장볼어묵조림", "잡곡밥", "장칼국수", "한입부추전", "매콤마늘쫑장아찌", "후식)오렌지주스", "배추김치", "식빵*딸기잼", "달걀후라이", "음료2종"}...)
 
-	tmt.parseMenuFile("testDiet.xlsx")
+	tmt.parseMenuFile("testDiet.xlsx", TestFilePath{})
 
 	assert.Equal(t, tmt.table, mockMenuTable.table, "tmt Equals modkMenuTable but different")
 }

@@ -39,6 +39,22 @@ type menutable struct {
 	table map[LunOrDin]menu
 }
 
+type IConvertFilepath interface {
+	convertFilepath(file string) string
+}
+
+type AWSLambdaFilepath struct{}
+
+func (AWSLambdaFilepath) convertFilepath(file string) string {
+	return fmt.Sprintf("/tmp/%s", file)
+}
+
+type AWSS3Filepath struct{}
+
+func (AWSS3Filepath) convertFilepath(file string) string {
+	return fmt.Sprintf("data/%s", file)
+}
+
 var mt *menutable
 
 func HandleErr(err error) {
@@ -56,8 +72,8 @@ func InitMenu() *menutable {
 	return m
 }
 
-func (m *menutable) parseMenuFile(file string) {
-	f, err := excelize.OpenFile(fmt.Sprintf("/tmp/%s", file))
+func (m *menutable) parseMenuFile(file string, target IConvertFilepath) {
+	f, err := excelize.OpenFile(target.convertFilepath(file))
 	HandleErr(err)
 	sheetName := f.GetSheetList()[0]
 
@@ -88,8 +104,8 @@ func (m *menutable) parseMenuFile(file string) {
 	}
 }
 
-func WriteFile(file string) {
-	f, err := os.Create(fmt.Sprintf("/tmp/%s", file))
+func WriteFile(file string, target IConvertFilepath) {
+	f, err := os.Create(target.convertFilepath(file))
 	HandleErr(err)
 	defer f.Close()
 	var buffer bytes.Buffer
@@ -98,29 +114,18 @@ func WriteFile(file string) {
 	f.Write(buffer.Bytes())
 }
 
-func ReadFile() {
-	f, _ := os.Open(menuObjectName)
-	defer f.Close()
-	var m menutable = menutable{}
-	var buffer bytes.Buffer
-	dec := gob.NewDecoder(&buffer)
-	buffer.ReadFrom(f)
-	dec.Decode(&m.table)
-	fmt.Println(m.table[LUNCH][time.Friday])
-}
-
-func DownloadDietFile(file string) {
+func DownloadDietFile(file string, target, keyPath IConvertFilepath) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	HandleErr(err)
 
-	f, err := os.Create(fmt.Sprintf("/tmp/%s", file))
+	f, err := os.Create(target.convertFilepath(file))
 	HandleErr(err)
 	defer f.Close()
 
 	client := s3.NewFromConfig(cfg)
 
 	bucket := os.Getenv("bucket")
-	key := fmt.Sprintf("data/%s", file)
+	key := keyPath.convertFilepath(file)
 
 	downloader := manager.NewDownloader(client)
 	_, err = downloader.Download(context.TODO(), f, &s3.GetObjectInput{
@@ -140,17 +145,17 @@ func PutFile(c context.Context, api S3PutObjectAPI, input *s3.PutObjectInput) (*
 	return api.PutObject(c, input)
 }
 
-func UploadFileToS3(file string) {
+func UploadFileToS3(file string, target, keyPath IConvertFilepath) {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	HandleErr(err)
 	client := s3.NewFromConfig(cfg)
 
-	f, err := os.Open(fmt.Sprintf("/tmp/%s", file))
+	f, err := os.Open(target.convertFilepath(file))
 	HandleErr(err)
 	defer f.Close()
 
 	bucket := os.Getenv("bucket")
-	key := fmt.Sprintf("data/%s", file)
+	key := keyPath.convertFilepath(file)
 	input := &s3.PutObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
@@ -168,11 +173,11 @@ type Test struct {
 var testMessage Test
 
 func LambdaHandler() (Test, error) {
-	DownloadDietFile(filename)
+	DownloadDietFile(filename, AWSLambdaFilepath{}, AWSS3Filepath{})
 	mt = InitMenu()
-	mt.parseMenuFile(filename)
-	WriteFile(menuObjectName)
-	UploadFileToS3(menuObjectName)
+	mt.parseMenuFile(filename, AWSLambdaFilepath{})
+	WriteFile(menuObjectName, AWSLambdaFilepath{})
+	UploadFileToS3(menuObjectName, AWSLambdaFilepath{}, AWSS3Filepath{})
 	testMessage.Test = "menu lambda test"
 	return testMessage, nil
 }
