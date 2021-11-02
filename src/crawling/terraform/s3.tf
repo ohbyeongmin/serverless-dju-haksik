@@ -6,7 +6,6 @@ resource "random_pet" "dh_bucket_name" {
 resource "aws_s3_bucket" "dh_bucket" {
   bucket = random_pet.dh_bucket_name.id
 
-  force_destroy = true
   tags = {
     Name = "dh_s3_bucket"
   }

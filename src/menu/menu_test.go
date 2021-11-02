@@ -10,13 +10,14 @@ import (
 var tmt *menutable
 
 func TestInitMenu(t *testing.T) {
+	assert := assert.New(t)
 	tmt = InitMenu()
-	assert.NotNil(t, tmt, "InitMenu Initialized menutable, but returns nil")
-	assert.NotNil(t, tmt.table, "InitMenu Initialized menutable.talbe, but returns nil")
+	assert.NotNil(tmt, "InitMenu Initialized menutable, but returns nil")
+	assert.NotNil(tmt.table, "InitMenu Initialized menutable.talbe, but returns nil")
 	_, ok := tmt.table[LUNCH]
-	assert.True(t, ok, "InitMenu Initialized menutable.talbe[LUNCH], but not exist")
+	assert.True(ok, "InitMenu Initialized menutable.talbe[LUNCH], but not exist")
 	_, ok = tmt.table[DINNER]
-	assert.True(t, ok, "InitMenu Initialized menutable.talbe[DINNER], but not exist")
+	assert.True(ok, "InitMenu Initialized menutable.talbe[DINNER], but not exist")
 }
 
 type TestFilePath struct{}
@@ -26,6 +27,7 @@ func (TestFilePath) convertFilepath(file string) string {
 }
 
 func TestParseMenuFile(t *testing.T) {
+	assert := assert.New(t)
 	mockMenuTable := menutable{
 		table: make(map[LunOrDin]menu),
 	}
@@ -46,5 +48,5 @@ func TestParseMenuFile(t *testing.T) {
 
 	tmt.parseMenuFile("testDiet.xlsx", TestFilePath{})
 
-	assert.Equal(t, tmt.table, mockMenuTable.table, "tmt Equals modkMenuTable but different")
+	assert.Equal(tmt.table, mockMenuTable.table, "tmt Equals modkMenuTable but different")
 }

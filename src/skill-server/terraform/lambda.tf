@@ -15,6 +15,7 @@ data "terraform_remote_state" "dh_s3" {
      }
 }
 
+
 data "terraform_remote_state" "object_file" {
   backend = "s3"
 
@@ -23,6 +24,16 @@ data "terraform_remote_state" "object_file" {
       region = "ap-northeast-2"
       key = "menu/terraform.tfstate"
   }
+}
+
+data "terraform_remote_state" "common" {
+    backend = "s3"
+
+    config = {
+      bucket = "dh-tfstate-backend-extremely-able-buffalo"
+      region = "ap-northeast-2"
+      key = "common/terraform.tfstate"
+     }
 }
 
 resource "aws_s3_bucket_object" "skill_server_function" {
@@ -98,24 +109,6 @@ resource "aws_iam_policy" "policy" {
   })
 }
 
-resource "aws_iam_policy" "logs_policy" {
-  name ="logs-policy-skill"
-
-  policy = jsonencode({
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      "Effect": "Allow",
-      "Resource": "arn:aws:logs:*:*:*"
-    }
-  ]
-  })
-}
 
 resource "aws_iam_role_policy_attachment" "skill_server_lambda_policy" {
   role       = aws_iam_role.skill_server_lambda_role.name
@@ -124,6 +117,6 @@ resource "aws_iam_role_policy_attachment" "skill_server_lambda_policy" {
 
 resource "aws_iam_role_policy_attachment" "logs_lambda_policy" {
   role       = aws_iam_role.skill_server_lambda_role.name
-  policy_arn = aws_iam_policy.logs_policy.arn
+  policy_arn = data.terraform_remote_state.common.outputs.logs_policy_arn
 }
 

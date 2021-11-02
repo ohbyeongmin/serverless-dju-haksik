@@ -5,6 +5,16 @@ data "archive_file" "crawling_function" {
     output_path = "${path.module}/crawling.zip"
 }
 
+data "terraform_remote_state" "common" {
+    backend = "s3"
+
+    config = {
+      bucket = "dh-tfstate-backend-extremely-able-buffalo"
+      region = "ap-northeast-2"
+      key = "common/terraform.tfstate"
+     }
+}
+
 resource "aws_s3_bucket_object" "crawling_function" {
   bucket = aws_s3_bucket.dh_bucket.id
 
@@ -68,25 +78,6 @@ resource "aws_iam_policy" "policy" {
   })
 }
 
-resource "aws_iam_policy" "logs_policy" {
-  name ="logs-policy"
-
-  policy = jsonencode({
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      "Effect": "Allow",
-      "Resource": "arn:aws:logs:*:*:*"
-    }
-  ]
-  })
-}
-
 
 resource "aws_iam_role_policy_attachment" "crawling_lambda_policy" {
   role       = aws_iam_role.crawling_lambda_role.name
@@ -95,5 +86,5 @@ resource "aws_iam_role_policy_attachment" "crawling_lambda_policy" {
 
 resource "aws_iam_role_policy_attachment" "logs_lambda_policy" {
   role       = aws_iam_role.crawling_lambda_role.name
-  policy_arn = aws_iam_policy.logs_policy.arn
+  policy_arn = data.terraform_remote_state.common.outputs.logs_policy_arn
 }

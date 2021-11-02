@@ -6,6 +6,7 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -59,7 +60,7 @@ func ReadFile() *menutable {
 }
 
 func HandleSkillServer(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
+	log.Printf("Body: %s", req.Body)
 	var weekDay time.Weekday
 	params := BotRequestType{
 		Action: ActionType{
@@ -72,13 +73,13 @@ func HandleSkillServer(req events.APIGatewayProxyRequest) (events.APIGatewayProx
 	dateTag, day := ParseSysdate(params.Action.Params["sys_date"])
 	lunchOrDinner, err := StringToLunOrDin(params.Action.Params["lunch_dinner"])
 	HandleErr(err)
-
+	log.Printf("dataTag: %s, day: %d, lunchOrDinner: %d", dateTag, day, lunchOrDinner)
 	t := time.Now()
 	loc, _ := time.LoadLocation("Asia/Seoul")
 	kst := t.In(loc)
 	if day != 0 {
 		weekDay = DayToWeekday(day)
-	} else if dateTag == "today" {
+	} else if dateTag == "today" || dateTag == "" {
 		weekDay = kst.Weekday()
 	} else if dateTag == "tomorrow" {
 		weekDay = kst.Add(time.Hour * 24).Weekday()

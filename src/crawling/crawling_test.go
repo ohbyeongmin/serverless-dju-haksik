@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -39,6 +40,7 @@ func TestPutObject(t *testing.T) {
 }
 
 func TestUrl(t *testing.T) {
+	assert := assert.New(t)
 	d := DaejeonHRCUrl{
 		ListURL:     "https://www.dju.ac.kr/hrc/na/ntt/selectNttList.do",
 		InfoURL:     "https://www.dju.ac.kr/hrc/na/ntt/selectNttInfo.do",
@@ -47,18 +49,17 @@ func TestUrl(t *testing.T) {
 		Mi:          "4597",
 	}
 
-	dietListUrl := "https://www.dju.ac.kr/hrc/na/ntt/selectNttList.do?mi=4597&bbsId=2126"
-	dietInfoUrl := "https://www.dju.ac.kr/hrc/na/ntt/selectNttInfo.do?nttSn=512606&bbsId=2126&mi=4597"
-	downloadUrl := "https://www.dju.ac.kr/common/nttFileDownload.do?fileKey=9c53541b5a24c3d6442778acbfa71e09&nttSn=512606&bbsId=2126"
 	d.SetUrl()
-
 	t.Run("Test getDietListURL()", func(t *testing.T) {
-		assert.Equal(t, dietListUrl, d.getDietListURL(), "invalid url")
+		res, _ := http.Get(d.getDietListURL())
+		assert.Equal(res.StatusCode, http.StatusOK)
 	})
 	t.Run("Test getDietInfoURL()", func(t *testing.T) {
-		assert.Equal(t, dietInfoUrl, d.getDietInfoURL(), "invalid url")
+		res, _ := http.Get(d.getDietInfoURL())
+		assert.Equal(res.StatusCode, http.StatusOK)
 	})
 	t.Run("Test getDownloadUrl()", func(t *testing.T) {
-		assert.Equal(t, downloadUrl, d.getDownloadURL(), "invalid url")
+		res, _ := http.Get(d.getDownloadURL())
+		assert.Equal(res.StatusCode, http.StatusOK)
 	})
 }
