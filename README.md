@@ -6,6 +6,8 @@
 -   [ ] CI/CD 구축 (Jenkins)
 -   [ ] CI/CD 구축 후 DynamoDB 도입
 
+AWS 인프라 구성 계획
+
 ```bash
 terraform
 ├─────── init
@@ -35,3 +37,4 @@ terraform
 | Devops Workshop                        | [Link](https://devops-art-factory.gitbook.io/devops-workshop/)                                                                    |
 | Jenkins Terraform Integration          | [Link](https://www.coachdevops.com/2021/07/jenkins-terraform-integration-how-do.html)                                             |
 | Jenkins Getting Started with Pipelines | [Link](https://www.jenkins.io/pipeline/getting-started-pipelines/)                                                                |
+| Git Workflow                           | [Link](https://blog.ull.im/engineering/2019/06/25/git-workflow-for-ci-cd.html)                                                    |
