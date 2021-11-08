@@ -2,7 +2,7 @@
 
 해야할 일 :
 
--   [ ] Staging / production 환경으로 인프라 나누기
+-   [x] Dev / Staging / production 환경으로 인프라 나누기
 -   [ ] CI/CD 구축 (Jenkins)
 -   [ ] CI/CD 구축 후 DynamoDB 도입
 
