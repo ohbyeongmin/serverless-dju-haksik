@@ -6,18 +6,6 @@
 -   [ ] CI/CD 구축 (Jenkins)
 -   [ ] CI/CD 구축 후 DynamoDB 도입
 
-AWS 인프라 구성 계획
-
-```bash
-terraform
-├─────── init
-├─────── modules
-├─────── staging
-│      └──── some terraform files....
-└─────── production
-       └──── some terraform files....
-```
-
 참고 :
 
 | 목록                                   | 링크                                                                                                                              |
