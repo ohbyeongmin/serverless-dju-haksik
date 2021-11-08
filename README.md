@@ -26,3 +26,67 @@
 | Jenkins Terraform Integration          | [Link](https://www.coachdevops.com/2021/07/jenkins-terraform-integration-how-do.html)                                             |
 | Jenkins Getting Started with Pipelines | [Link](https://www.jenkins.io/pipeline/getting-started-pipelines/)                                                                |
 | Git Workflow                           | [Link](https://blog.ull.im/engineering/2019/06/25/git-workflow-for-ci-cd.html)                                                    |
+
+```bash
+.
+├── src
+│   ├── crawling
+│   │   ├── config
+│   │   │   └── url.yaml
+│   │   ├── cover.out
+│   │   ├── crawling.go
+│   │   └── crawling_test.go
+│   ├── menu
+│   │   ├── cover.out
+│   │   ├── menu.go
+│   │   └── menu_test.go
+│   └── skill-server
+│       ├── main.go
+│       ├── request-from-bot.go
+│       ├── response.go
+│       ├── service.go
+│       ├── skill_server.go
+│       └── utils.go
+└── terraform
+    ├── apiGateway
+    │   ├── _module
+    │   │   └── apiGateway
+    │   │       ├── apiGateway.tf
+    │   │       └── variables.tf
+    │   ├── dev
+    │   ├── production
+    │   ├── provider.tf
+    │   └── staging
+    ├── ec2
+    │   ├── dh-prod
+    │   └── provider.tf
+    ├── iam
+    │   ├── byeongmin
+    │   └── dh-prod
+    ├── init
+    │   ├── byeongmin
+    │   └── dh-prod
+    ├── lambda
+    │   ├── _module
+    │   │   ├── crawling-lambda
+    │   │   ├── menu-lambda
+    │   │   └── skill-server-lambda
+    │   ├── dev
+    │   ├── outputs.tf
+    │   ├── production
+    │   ├── provider.tf
+    │   └── staging
+    ├── logs
+    │   ├── _module
+    │   ├── dev
+    │   ├── production
+    │   ├── provider.tf
+    │   └── staging
+    └── s3
+        ├── _module
+        ├── dev
+        ├── outputs.tf
+        ├── production
+        ├── provider.tf
+        └── staging
+```
