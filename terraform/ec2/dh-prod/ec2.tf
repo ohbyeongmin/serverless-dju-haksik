@@ -46,6 +46,8 @@ resource "aws_instance" "prod-ec2" {
   ebs_optimized          = var.ebs_optimized
   key_name = aws_key_pair.dh-ec2-key.key_name
 
+  iam_instance_profile = aws_iam_instance_profile.ec2-profile.name
+
   root_block_device {
     volume_size = "10"
   }
@@ -56,4 +58,45 @@ resource "aws_instance" "prod-ec2" {
     stack = var.stack
   }
 
+}
+
+resource "aws_iam_role" "ec2-role" {
+  name = "ec2-role"
+
+  assume_role_policy = jsonencode({
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+        "Action": "sts:AssumeRole",
+        "Principal": {
+          "Service": "ec2.amazonaws.com"
+        },
+        "Effect": "Allow",
+        "Sid": ""
+      }
+    ]
+  })
+}
+
+resource "aws_iam_instance_profile" "ec2-profile" {
+  name = "ec2-profile"
+  role = "${aws_iam_role.ec2-role.name}"
+}
+
+resource "aws_iam_role_policy" "ec2-policy" {
+  name = "ec-2policy"
+  role = "${aws_iam_role.ec2-role.id}"
+
+  policy =  jsonencode({
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+        "Action": [
+          "ec2:AmazonEC2FullAccess"
+        ],
+        "Effect": "Allow",
+        "Resource": "*"
+      }
+    ]
+  })
 }
