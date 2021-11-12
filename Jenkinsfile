@@ -6,10 +6,20 @@ pipeline{
                 checkout scm
             }
         }
-        stage("Jenkins test"){
+        stage("Test"){
             steps{
-                dir("terraform/apiGateway"){
-                    sh('pwd')
+                dir('src/crawling'){
+                    sh('make test')
+                }
+            }
+            steps{
+                dir('src/menu'){
+                    sh('make test')
+                }
+            }
+            steps{
+                dir('src/skill-server'){
+                    sh('make test')
                 }
             }
         }
