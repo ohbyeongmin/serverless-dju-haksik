@@ -21,20 +21,20 @@ pipeline{
                         }
                     }
                 }
-                // stage('menu test'){
-                //     steps{
-                //         dir('src/menu'){
-                //             sh('make test')
-                //         }
-                //     }
-                // }
-                // stage('skill server test'){
-                //     steps{
-                //         dir('src/skill-server'){
-                //             sh('make test')
-                //         }
-                //     }
-                // }
+                stage('menu test'){
+                    steps{
+                        dir('src/menu'){
+                            sh('make test')
+                        }
+                    }
+                }
+                stage('skill server test'){
+                    steps{
+                        dir('src/skill-server'){
+                            sh('make test')
+                        }
+                    }
+                }
             }
         }
     }
