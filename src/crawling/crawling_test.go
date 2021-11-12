@@ -1,43 +1,40 @@
 package main
 
 import (
-	"context"
 	"net/http"
 	"testing"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"
 )
 
-type S3PutObjectMock struct{}
+// type S3PutObjectMock struct{}
 
-func (S3PutObjectMock) PutObject(ctx context.Context,
-	params *s3.PutObjectInput,
-	optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
+// func (S3PutObjectMock) PutObject(ctx context.Context,
+// 	params *s3.PutObjectInput,
+// 	optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
 
-	output := &s3.PutObjectOutput{
-		VersionId: aws.String("1.0"),
-	}
+// 	output := &s3.PutObjectOutput{
+// 		VersionId: aws.String("1.0"),
+// 	}
 
-	return output, nil
-}
+// 	return output, nil
+// }
 
-func TestPutObject(t *testing.T) {
-	b := "testBucket"
-	k := "file"
-	input := s3.PutObjectInput{
-		Bucket: &b,
-		Key:    &k,
-	}
+// func TestPutObject(t *testing.T) {
+// 	b := "testBucket"
+// 	k := "file"
+// 	input := s3.PutObjectInput{
+// 		Bucket: &b,
+// 		Key:    &k,
+// 	}
 
-	api := &S3PutObjectMock{}
+// 	api := &S3PutObjectMock{}
 
-	resp, err := PutFile(context.Background(), *api, &input)
-	assert.Nilf(t, err, "error: %s", err)
+// 	resp, err := PutFile(context.Background(), *api, &input)
+// 	assert.Nilf(t, err, "error: %s", err)
 
-	t.Log("Uploaded version " + *resp.VersionId + " of " + k + " to bucket " + b)
-}
+// 	t.Log("Uploaded version " + *resp.VersionId + " of " + k + " to bucket " + b)
+// }
 
 func TestUrl(t *testing.T) {
 	assert := assert.New(t)
