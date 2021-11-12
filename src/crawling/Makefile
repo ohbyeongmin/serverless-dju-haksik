@@ -5,7 +5,7 @@ build:
 	cp -r config bin/
 
 test:
-	go test -v -coverprofile cover.out ./...
+	go test ./... -cover
 
 lambda:
 	aws lambda invoke --region=ap-northeast-2 --function-name=crawling response.json

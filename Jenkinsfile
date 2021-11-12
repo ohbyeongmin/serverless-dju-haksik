@@ -1,11 +1,11 @@
 pipeline{
     agent any
-    // tools{
-    //     go 'go-tool'
-    // }
-    // environment{
-    //     GO111MODULE = 'on'
-    // }
+    tools{
+        go 'go-tool'
+    }
+    environment{
+        GO111MODULE = 'on'
+    }
     stages{
         stage("Checkout"){
             steps{
@@ -17,7 +17,7 @@ pipeline{
                 stage('crawling test'){
                     steps{
                         dir('src/crawling'){
-                            sh('/usr/local/go/bin/go test ./... -cover')
+                            sh('make test')
                         }
                     }
                 }
