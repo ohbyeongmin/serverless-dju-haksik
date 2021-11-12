@@ -7,19 +7,27 @@ pipeline{
             }
         }
         stage("Test"){
-            steps{
-                dir('src/crawling'){
-                    sh('make test')
+            parallel {
+                stage('crawling test'){
+                    steps{
+                        dir('src/crawling'){
+                            sh('make test')
+                        }
+                    }
                 }
-            }
-            steps{
-                dir('src/menu'){
-                    sh('make test')
+                stage('menu test'){
+                    steps{
+                        dir('src/menu'){
+                            sh('make test')
+                        }
+                    }
                 }
-            }
-            steps{
-                dir('src/skill-server'){
-                    sh('make test')
+                stage('skill server test'){
+                    steps{
+                        dir('src/skill-server'){
+                            sh('make test')
+                        }
+                    }
                 }
             }
         }
