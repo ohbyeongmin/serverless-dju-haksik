@@ -8,7 +8,7 @@ pipeline{
         }
         stage("Jenkins test"){
             steps{
-                dir("terraform"){
+                dir("terraform/apiGateway"){
                     sh('pwd')
                 }
             }
