@@ -6,5 +6,12 @@ pipeline{
                 checkout scm
             }
         }
+        stage("Jenkins test"){
+            steps{
+                dir("terraform"){
+                    sh('pwd')
+                }
+            }
+        }
     }
 }
