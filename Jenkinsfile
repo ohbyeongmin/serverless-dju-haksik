@@ -17,7 +17,7 @@ pipeline{
                 stage('crawling test'){
                     steps{
                         dir('src/crawling'){
-                            sh('make test')
+                            sh('/usr/local/go/bin/go test ./... -cover')
                         }
                     }
                 }
