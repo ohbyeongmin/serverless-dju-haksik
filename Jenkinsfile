@@ -1,11 +1,11 @@
 pipeline{
     agent any
-    tools{
-        go 'go-tool'
-    }
-    environment{
-        GO111MODULE = 'on'
-    }
+    // tools{
+    //     go 'go-tool'
+    // }
+    // environment{
+    //     GO111MODULE = 'on'
+    // }
     stages{
         stage("Checkout"){
             steps{
